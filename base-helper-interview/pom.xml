@@ -12,8 +12,9 @@
 
     <dependencies>
         <dependency>
-            <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-starter-web</artifactId>
+            <groupId>org.example</groupId>
+            <artifactId>base-helper-support</artifactId>
+            <version>${project.version}</version>
         </dependency>
     </dependencies>
 </project>
