@@ -9,6 +9,6 @@ import org.springframework.stereotype.Service;
 @Service
 public class TestLogic {
     public String test() {
-        return "Hello World";
+        return "Hello World Base Helper";
     }
 }
