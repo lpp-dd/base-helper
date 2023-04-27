@@ -5,6 +5,8 @@ import org.redisson.api.RedissonClient;
 import org.redisson.config.Config;
 import org.redisson.config.ReadMode;
 import org.redisson.config.SubscriptionMode;
+import redis.clients.jedis.JedisPool;
+import redis.clients.jedis.JedisPoolConfig;
 
 /**
  * @author panfudong
@@ -16,6 +18,10 @@ public class RedisConfig {
     private String slaveAddress;
     private String password;
 
+    private String host;
+    private int port;
+    private int timeout;
+
     public RedissonClient redissonClient() {
         Config config = new Config();
         config.useMasterSlaveServers()
@@ -25,5 +31,10 @@ public class RedisConfig {
                 .setReadMode(ReadMode.MASTER)
                 .setSubscriptionMode(SubscriptionMode.MASTER);
         return Redisson.create(config);
+    }
+
+    public JedisPool jedisPool() {
+        JedisPoolConfig jedisPoolConfig = new JedisPoolConfig();
+        return new JedisPool(jedisPoolConfig, host, port, timeout, password);
     }
 }

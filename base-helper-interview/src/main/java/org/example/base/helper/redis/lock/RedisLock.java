@@ -12,22 +12,12 @@ import static java.lang.annotation.RetentionPolicy.RUNTIME;
 public @interface RedisLock {
 
     /**
-     * 解析锁key的表达式
-     * @return
+     * @return 解析锁key的表达式
      */
     String expression();
 
     /**
-     * 超时时间
-     * @return
+     * @return 锁最长占用时间 单位毫秒
      */
-    long timeout() default 100L;
-
-    /**
-     * 超时时间单位
-     * @return
-     */
-    TimeUnit timeUnit() default TimeUnit.MILLISECONDS;
-
-
+    long leaseTime() default 1000L;
 }
