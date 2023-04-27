@@ -7,7 +7,6 @@ import org.aspectj.lang.annotation.Around;
 import org.aspectj.lang.annotation.Aspect;
 import org.aspectj.lang.reflect.MethodSignature;
 import org.example.base.helper.common.ExpressionParserUtil;
-import org.springframework.expression.EvaluationException;
 import redis.clients.jedis.Jedis;
 import redis.clients.jedis.JedisPool;
 import redis.clients.jedis.params.SetParams;
@@ -19,10 +18,22 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
+import java.util.function.Function;
 
 /**
  * @author panfudong
  * @description <a href="https://www.cnblogs.com/wangyingshuo/p/14510524.html">参考文档</a>
+ * 1、互斥性
+ * 2、自旋重试 todo
+ * 3、可重入性 todo
+ * 4、安全性 避免非法删除
+ * 5、高可用性 依赖redis集群
+ * 6、加锁失败拒绝策略 todo
+ *
+ * 关于异常情况的思考
+ * 1、redisLock注解属性非法，显式抛出IllegalArgumentException
+ * 2、redis超时，默认按照加锁失败走拒绝策略
+ * 3、被代理方法异常，正常抛出
  */
 @Aspect
 @Slf4j
@@ -49,34 +60,34 @@ public class RedisLockAspect {
         for (int i = 0; i < args.length; i++) {
             dataMap.put(names[i], args[i]);
         }
-        boolean lockFlag = false;
-        String key = null;
-        String currentUniqueId = null;
-        Jedis jedis = null;
-        try {
-            key = ExpressionParserUtil.parse(dataMap, lockAnno.expression(), String.class);
-            currentUniqueId = InetAddress.getLocalHost().getHostAddress() + ":" + Thread.currentThread().getId();
-            jedis = jedisPool.getResource();
-            String result = jedis.set(key, currentUniqueId, SetParams.setParams().nx().px(lockAnno.leaseTime()));
-            lockFlag = Objects.equals(result, SUCCESS);
-        } catch (EvaluationException e) {
+        String key = ExpressionParserUtil.parseWithDefault(dataMap, lockAnno.expression(), String.class, null);
+        if (Objects.isNull(key)) {
             throw new IllegalArgumentException("redis lock annotation expression illegal");
-        } catch (Exception e) {
-            log.error("redis lock error and do reject policy e:{}", e.getMessage(), e);
-        } finally {
-            if (Objects.nonNull(jedis)) {
-                jedis.close();
-            }
         }
+        String currentUniqueId = InetAddress.getLocalHost().getHostAddress() + ":" + Thread.currentThread().getId();
+        boolean lockFlag = Objects.equals(execute(jedis -> jedis.set(key, currentUniqueId, SetParams.setParams().nx().px(lockAnno.leaseTime()))), SUCCESS);
         if (!lockFlag) {
             throw new UnsupportedOperationException("lock failed");
         }
         try {
             return pjp.proceed();
         } finally {
+            execute(jedis -> jedis.eval(UNLOCK_SCRIPT, Collections.singletonList(key), Collections.singletonList(currentUniqueId)));
+        }
+    }
+
+    private <R> R execute(Function<Jedis, R> function) {
+        Jedis jedis = null;
+        try {
             jedis = jedisPool.getResource();
-            jedis.eval(UNLOCK_SCRIPT, Collections.singletonList(key), Collections.singletonList(currentUniqueId));
-            jedis.close();
+            return function.apply(jedis);
+        } catch (Exception e) {
+            log.error("redis lock error:{}", e.getMessage(), e);
+            return null;
+        } finally {
+            if (Objects.nonNull(jedis)) {
+                jedis.close();
+            }
         }
     }
 }

@@ -15,6 +15,15 @@ import java.util.Objects;
  * https://www.cnblogs.com/strongmore/p/15335622.html
  */
 public interface ExpressionParserUtil {
+
+    static <T> T parseWithDefault(Map<String, Object> dataMap, String expression, Class<T> tClass, T defaultValue) {
+        try {
+            return parse(dataMap, expression, tClass);
+        } catch (EvaluationException ignore) {
+        }
+        return defaultValue;
+    }
+
     /**
      * 根据表达式解析参数值
      * @param dataMap
