@@ -23,12 +23,17 @@ import java.util.function.Function;
 /**
  * @author panfudong
  * @description <a href="https://www.cnblogs.com/wangyingshuo/p/14510524.html">参考文档</a>
+ *
+ * 特性
  * 1、互斥性
- * 2、自旋重试 todo
- * 3、可重入性 todo
- * 4、安全性 避免非法删除
+ * 2、可重入性 todo
+ * 3、安全性 避免非法删除
+ * 4、超时解锁
  * 5、高可用性 依赖redis集群
- * 6、加锁失败拒绝策略 todo
+ *
+ * 支持能力：
+ * 1、自旋重试 todo
+ * 2、自定义拒绝策略
  *
  * 关于异常情况的思考
  * 1、redisLock注解属性非法，显式抛出IllegalArgumentException
@@ -51,7 +56,7 @@ public class RedisLockAspect {
         MethodSignature signature = (MethodSignature) pjp.getSignature();
         Method method = signature.getMethod();
         RedisLock lockAnno = method.getAnnotation(RedisLock.class);
-        if (StringUtils.isBlank(lockAnno.expression()) || lockAnno.leaseTime() < 1) {
+        if (StringUtils.isBlank(lockAnno.expression()) || lockAnno.leaseTime() < 1 || Objects.isNull(lockAnno.rejectPolicy())) {
             throw new IllegalArgumentException("redis lock annotation property illegal");
         }
         Object[] args = pjp.getArgs();
@@ -67,7 +72,7 @@ public class RedisLockAspect {
         String currentUniqueId = InetAddress.getLocalHost().getHostAddress() + ":" + Thread.currentThread().getId();
         boolean lockFlag = Objects.equals(execute(jedis -> jedis.set(key, currentUniqueId, SetParams.setParams().nx().px(lockAnno.leaseTime()))), SUCCESS);
         if (!lockFlag) {
-            throw new UnsupportedOperationException("lock failed");
+            lockAnno.rejectPolicy().getRejectPolicy().doReject();
         }
         try {
             return pjp.proceed();
