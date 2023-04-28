@@ -1,5 +1,6 @@
 package org.example.base.helper.configuration;
 
+import lombok.Setter;
 import org.redisson.Redisson;
 import org.redisson.api.RedissonClient;
 import org.redisson.config.Config;
@@ -12,6 +13,7 @@ import redis.clients.jedis.JedisPoolConfig;
  * @author panfudong
  * @description
  */
+@Setter
 public class RedisConfig {
 
     private String masterAddress;

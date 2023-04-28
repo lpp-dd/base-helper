@@ -18,8 +18,9 @@ public class TestController {
     @Resource
     private TestLogic testLogic;
 
-    @GetMapping("/test")
-    public String test() {
-        return testLogic.test();
+    @GetMapping("/redisLockTest")
+    public String redisLockTest(Long id) throws InterruptedException {
+        testLogic.redisLockTest(id);
+        return "OK";
     }
 }
