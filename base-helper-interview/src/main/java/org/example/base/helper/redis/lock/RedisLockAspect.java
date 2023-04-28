@@ -87,7 +87,7 @@ public class RedisLockAspect {
             jedis = jedisPool.getResource();
             return function.apply(jedis);
         } catch (Exception e) {
-            log.error("redis lock error:{}", e.getMessage(), e);
+            log.error("redis error:{}", e.getMessage(), e);
             return null;
         } finally {
             if (Objects.nonNull(jedis)) {
