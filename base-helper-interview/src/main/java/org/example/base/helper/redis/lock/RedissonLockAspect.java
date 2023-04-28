@@ -49,6 +49,7 @@ public class RedissonLockAspect {
         RLock rLock = null;
         try {
             rLock = redissonClient.getLock(key);
+            //支持线程级别重入
             lockFlag = rLock.tryLock(lockAnno.waitTime(), lockAnno.leaseTime(), TimeUnit.MILLISECONDS);
         } catch (Exception e) {
             log.error("redis lock error:{}", e.getMessage(), e);
