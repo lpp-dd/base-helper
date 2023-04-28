@@ -11,7 +11,7 @@ import java.lang.annotation.Target;
  */
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.METHOD)
-public @interface RedissionLock {
+public @interface RedissonLock {
 
     /**
      * @return 解析锁key的表达式

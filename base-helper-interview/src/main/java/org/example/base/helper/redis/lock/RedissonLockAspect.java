@@ -24,16 +24,16 @@ import java.util.concurrent.TimeUnit;
  */
 @Aspect
 @Slf4j
-public class RedissionLockAspect {
+public class RedissonLockAspect {
 
     @Resource
     private RedissonClient redissonClient;
 
-    @Around(value = "@annotation(org.example.base.helper.redis.lock.RedissionLock)")
+    @Around(value = "@annotation(org.example.base.helper.redis.lock.RedissonLock)")
     public Object around(ProceedingJoinPoint pjp) throws Throwable {
         MethodSignature signature = (MethodSignature) pjp.getSignature();
         Method method = signature.getMethod();
-        RedissionLock lockAnno = method.getAnnotation(RedissionLock.class);
+        RedissonLock lockAnno = method.getAnnotation(RedissonLock.class);
         if (StringUtils.isBlank(lockAnno.expression()) || lockAnno.leaseTime() < 1 || lockAnno.waitTime() < 1 || Objects.isNull(lockAnno.rejectPolicy())) {
             throw new IllegalArgumentException("redis lock annotation property illegal");
         }
@@ -49,7 +49,7 @@ public class RedissionLockAspect {
         RLock rLock = null;
         try {
             rLock = redissonClient.getLock(key);
-            lockFlag = rLock.tryLock(lockAnno.waitTime(), lockAnno.leaseTime(), TimeUnit.MICROSECONDS);
+            lockFlag = rLock.tryLock(lockAnno.waitTime(), lockAnno.leaseTime(), TimeUnit.MILLISECONDS);
         } catch (Exception e) {
             log.error("redis lock error:{}", e.getMessage(), e);
         }
@@ -59,7 +59,7 @@ public class RedissionLockAspect {
         try {
             return pjp.proceed();
         } finally {
-            if (Objects.nonNull(rLock) && rLock.isHeldByCurrentThread()) {
+            if (Objects.nonNull(rLock) && rLock.isLocked() && rLock.isHeldByCurrentThread()) {
                 try {
                     rLock.unlock();
                 } catch (Exception e) {

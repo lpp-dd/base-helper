@@ -4,3 +4,5 @@ redis:
   port:
   password:
   timeout:
+  master:
+  slave:
