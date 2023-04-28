@@ -1,0 +1,6 @@
+#本地配置文件中数据库和redis连接信息，在本地更新即可，不需要上传到git上
+redis:
+  host:
+  port:
+  password:
+  timeout:
