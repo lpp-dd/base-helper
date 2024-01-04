@@ -3,6 +3,10 @@ package org.example.base.helper.alg;
 import lombok.Getter;
 import lombok.Setter;
 
+import java.util.ArrayDeque;
+import java.util.List;
+import java.util.Queue;
+
 /**
  * @author panfudong
  * @description
@@ -56,6 +60,30 @@ public class BinaryTreeTest {
         private BinaryTree left;
         private BinaryTree right;
         private int value;
+    }
+
+    /**
+     * 这里面 利用队列的FIFO思路 将二叉树每层的节点进队列打印，出队列获取左右子树进队列 这样的方式进行
+     * @param result
+     * @param bTree
+     */
+    public void bfs(List<BinaryTree> result, BinaryTree bTree) {
+        if (bTree == null) {
+            return;
+        }
+        Queue<BinaryTree> queue = new ArrayDeque<>();
+        queue.add(bTree);
+        while (!queue.isEmpty()) {
+            BinaryTree first = queue.poll();
+            result.add(first);
+            if (first.left != null) {
+                queue.add(first.left);
+            }
+            if (first.right != null) {
+                queue.add(first.right);
+            }
+        }
+
     }
 
 }
