@@ -6,6 +6,7 @@ import lombok.Setter;
 
 import java.util.Comparator;
 import java.util.HashMap;
+import java.util.List;
 import java.util.PriorityQueue;
 
 /**
@@ -18,6 +19,7 @@ import java.util.PriorityQueue;
  */
 public class BigHeap {
 
+    //这个方法是对题目的解答方案
     public static void main(String[] args) {
         Integer[] arr = new Integer[]{};
         HashMap<Integer, Integer> countMap = new HashMap<>();
@@ -45,5 +47,30 @@ public class BigHeap {
             this.value = value;
         }
     }
+
+    private List<BinaryTreeTest.BinaryTree> bigHeap;
+
+    public void add(BinaryTreeTest.BinaryTree bTree) {
+        bigHeap.add(bTree);
+        //节点上浮
+        up(bigHeap.size() - 1);
+    }
+
+    public void up(int j) {
+        if (j <= 0 || j >= bigHeap.size()) {
+            return;
+        }
+        int i = (j - 1) / 2;
+        BinaryTreeTest.BinaryTree sun = bigHeap.get(j);
+        BinaryTreeTest.BinaryTree father = bigHeap.get(i);
+        if (sun.getValue() > father.getValue()) {
+            bigHeap.set(i, sun);
+            bigHeap.set(j, father);
+        } else {
+            return;
+        }
+        up(i);
+    }
+
 
 }
