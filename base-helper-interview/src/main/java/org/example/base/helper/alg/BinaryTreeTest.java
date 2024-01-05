@@ -86,4 +86,14 @@ public class BinaryTreeTest {
 
     }
 
+
+    public void dfs(List<BinaryTree> result, BinaryTree bTree) {
+        if (bTree == null) {
+            return;
+        }
+        result.add(bTree);
+        dfs(result, bTree.getLeft());
+        dfs(result, bTree.getRight());
+    }
+
 }
