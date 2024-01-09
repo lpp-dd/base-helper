@@ -10,6 +10,10 @@ import java.util.stream.Collectors;
 /**
  * @author panfudong
  * @description
+ * 回溯算法解决问题时，主要分为如下几步
+ * 1、声明入参  原始入参集合，递归中间变量(可以是索引，也可以是元素)，resultItemList，resultList
+ * 2、确定递归终止条件 resultItemList中元素长度满足或者其他的一些规则
+ * 3、遍历入参集合，判断条件，增加元素，递归，回溯
  */
 public class Backtracking {
 
