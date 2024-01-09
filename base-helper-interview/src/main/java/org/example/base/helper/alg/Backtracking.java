@@ -37,12 +37,29 @@ public class Backtracking {
 
         List<String> result = new ArrayList<>();
         bt(3, left, right, 0, 0, new ArrayList<>(), result);
-
         System.out.println(result);
 
         List<String> queenResult = new ArrayList<>();
-        btQueen(5, 0, new ArrayList<>(), queenResult);
+        btQueen(4, 0, new ArrayList<>(), queenResult);
         System.out.println(queenResult);
+
+        List<Integer> numberList = new ArrayList<>();
+        numberList.add(1);
+        numberList.add(2);
+        numberList.add(3);
+        List<String> sumResult = new ArrayList<>();
+        btSum(numberList, 3, new ArrayList<>(), sumResult);
+        System.out.println(sumResult);
+
+
+        List<String> itemList = new ArrayList<>();
+        itemList.add("a");
+        itemList.add("b");
+        itemList.add("c");
+        List<String> fpResult = new ArrayList<>();
+        btFP(itemList, new ArrayList<>(), fpResult);
+        System.out.println(fpResult);
+
     }
 
     public static List<String> restoreIp(String ipAddress) {
@@ -134,6 +151,50 @@ public class Backtracking {
             }
         }
         return true;
+    }
+
+    /**
+     * 组合求和
+     * @param numberList
+     * @param target
+     * @param resultItem
+     * @param result
+     */
+    public static void btSum(List<Integer> numberList, Integer target, List<Integer> resultItem, List<String> result) {
+        int sum = resultItem.stream().mapToInt(i -> i).sum();
+        if (sum == target) {
+            result.add(resultItem.stream().map(String::valueOf).collect(Collectors.joining("-")));
+            return;
+        }
+        if (sum > target) {
+            return;
+        }
+        for (Integer number : numberList) {
+            resultItem.add(number);
+            btSum(numberList, target, resultItem, result);
+            resultItem.remove(resultItem.size() - 1);
+        }
+    }
+
+    /**
+     * 全排列
+     * @param itemList
+     * @param resultItem
+     * @param result
+     */
+    public static void btFP(List<String> itemList, List<String> resultItem, List<String> result) {
+        if (resultItem.size() == itemList.size()) {
+            result.add(String.join("-", resultItem));
+            return;
+        }
+        for (int i = 0; i < itemList.size(); i++) {
+            if (resultItem.contains(itemList.get(i))) {
+                continue;
+            }
+            resultItem.add(itemList.get(i));
+            btFP(itemList, resultItem, result);
+            resultItem.remove(resultItem.size() - 1);
+        }
     }
 
 }
