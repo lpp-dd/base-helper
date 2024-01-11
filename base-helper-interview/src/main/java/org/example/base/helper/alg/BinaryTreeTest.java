@@ -4,6 +4,7 @@ import lombok.Getter;
 import lombok.Setter;
 
 import java.util.ArrayDeque;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Queue;
 
@@ -14,7 +15,6 @@ import java.util.Queue;
 public class BinaryTreeTest {
 
     public static void main(String[] args) {
-
     }
 
     /**
@@ -94,6 +94,38 @@ public class BinaryTreeTest {
         result.add(bTree);
         dfs(result, bTree.getLeft());
         dfs(result, bTree.getRight());
+    }
+
+    /**
+     * 给定一个二叉树，设计一个算法来打印出该二叉树的最右侧节点。最右侧节点是指在每一层中，最靠右的节点。
+     * 这里面有一个点是：之前按照层遍历的时候，我们是节点维度遍历，现在是改成了按照层维度遍历
+     * 按照层维度遍历，我们每次遍历的时候，队列的长度就是当前层节点的个数
+     * @param bTree
+     * @return
+     */
+    public static List<BinaryTree> right(BinaryTree bTree) {
+        if (bTree == null) {
+            return null;
+        }
+        List<BinaryTree> result = new ArrayList<>();
+        Queue<BinaryTree> queue = new ArrayDeque<>();
+        queue.add(bTree);
+        while (!queue.isEmpty()) {
+            int currentLevelItemSize = queue.size();
+            for (int i = 0; i < currentLevelItemSize; i++) {
+                BinaryTree poll = queue.poll();
+                if (i == currentLevelItemSize - 1) {
+                    result.add(poll);
+                }
+                if (poll.left != null) {
+                    queue.add(poll.left);
+                }
+                if (poll.right != null) {
+                    queue.add(poll.right);
+                }
+            }
+        }
+        return result;
     }
 
 }
