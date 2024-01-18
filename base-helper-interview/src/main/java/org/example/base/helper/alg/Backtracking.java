@@ -29,7 +29,7 @@ public class Backtracking {
      * 输出：["255.255.11.135", "255.255.111.35"]
      */
     public static void main(String[] args) {
-        List<String> left = new ArrayList<>();
+        /*List<String> left = new ArrayList<>();
         left.add("(");
         left.add("(");
         left.add("(");
@@ -62,7 +62,21 @@ public class Backtracking {
         itemList.add("c");
         List<String> fpResult = new ArrayList<>();
         btFP(itemList, new ArrayList<>(), fpResult);
-        System.out.println(fpResult);
+        System.out.println(fpResult);*/
+
+
+        List<Integer> sourceList = new ArrayList<>();
+        sourceList.add(3);
+        sourceList.add(4);
+        sourceList.add(1);
+        sourceList.add(5);
+        sourceList.add(6);
+        sourceList.add(7);
+        sourceList.add(8);
+        sourceList.add(9);
+        List<String> resultMaxSubString = new ArrayList<>();
+        btMaxSubString(sourceList, 0, new ArrayList<>(), resultMaxSubString);
+        System.out.println(resultMaxSubString);
 
     }
 
@@ -197,6 +211,21 @@ public class Backtracking {
             }
             resultItem.add(itemList.get(i));
             btFP(itemList, resultItem, result);
+            resultItem.remove(resultItem.size() - 1);
+        }
+    }
+
+    /**
+     * 最长自增子序列，可以不连续
+     */
+    public static void btMaxSubString(List<Integer> sourceList, int currentIndex, List<Integer> resultItem, List<String> result) {
+        if (currentIndex >= sourceList.size() || (resultItem.size() > 0 && sourceList.get(currentIndex) < resultItem.get(resultItem.size() - 1))) {
+            result.add(resultItem.stream().map(Object::toString).collect(Collectors.joining("-")));
+            return;
+        }
+        for (int i = currentIndex; i < sourceList.size() - 1; i++) {
+            resultItem.add(sourceList.get(i));
+            btMaxSubString(sourceList, i + 1, resultItem, result);
             resultItem.remove(resultItem.size() - 1);
         }
     }
