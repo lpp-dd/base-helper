@@ -74,9 +74,12 @@ public class SortTest {
     }
 
     public static void quickSorted(List<Integer> list, int l, int r) {
-        int base = list.get(l);
-        int left = l + 1;
-        int right = r;
+        if (l > r) {
+            return;
+        }
+        int base = list.get(r);
+        int left = l;
+        int right = r - 1;
         while (left <= right) {
             while (list.get(left) < base && left <= right) {
                 left++;
@@ -88,7 +91,11 @@ public class SortTest {
                 swap(list, left, right);
             }
         }
-        swap(list, l, left);
+        if (list.get(left) >= list.get(r)) {
+            swap(list, left, r);
+        } else {
+            left++;
+        }
         quickSorted(list, l, left - 1);
         quickSorted(list, left + 1, r);
     }
