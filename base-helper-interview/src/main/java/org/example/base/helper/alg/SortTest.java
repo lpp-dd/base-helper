@@ -26,37 +26,45 @@ public class SortTest {
 
     }
 
+    int[] tmp;
+    public int[] sortArray(int[] nums) {
+        tmp = new int[nums.length];
+        mergeSort(nums, 0, nums.length - 1);
+        return nums;
+    }
+
     /**
      * 归并排序
-     * @param list
-     * @return
+     * @param nums
+     * @param left
+     * @param right
      */
-    public static List<Integer> mergeSorted(List<Integer> list) {
-        if (Objects.isNull(list) || list.size() <= 1) {
-            return list;
-        }
-        mergeSorted(list, 0, list.size());
-        return list;
-    }
-
-    private static void mergeSorted(List<Integer> list, int i, int j) {
-        if (i >= j) {
+    private void mergeSort(int[] nums, int left, int right) {
+        if (left >= right) {
             return;
         }
-        int mid = (i + j) / 2;
-        mergeSorted(list, i, mid);
-        mergeSorted(list, mid, j);
-        List<Integer> first = list.subList(i, mid);
-        List<Integer> second = list.subList(mid, j);
-        merge(first, second);
-
+        int mid = (left + right) / 2;
+        mergeSort(nums, left, mid);
+        mergeSort(nums, mid + 1, right);
+        int i = left, j = mid + 1;
+        int cnt = 0;
+        while (i <= mid && j <= right) {
+            if (nums[i] <= nums[j]) {
+                tmp[cnt++] = nums[i++];
+            } else {
+                tmp[cnt++] = nums[j++];
+            }
+        }
+        while (i <= mid) {
+            tmp[cnt++] = nums[i++];
+        }
+        while (j <= right) {
+            tmp[cnt++] = nums[j++];
+        }
+        for (int k = 0; k < right - left + 1; ++k) {
+            nums[k + left] = tmp[k];
+        }
     }
-
-    private static List<Integer> merge(List<Integer> s1, List<Integer> s2) {
-        //合并两个有序链表
-        return null;
-    }
-
 
     public static void quickSorted(List<Integer> list) {
         if (list == null || list.size() <= 1) {
