@@ -11,19 +11,8 @@ import java.util.Objects;
 public class SortTest {
 
     public static void main(String[] args) {
-        List<Integer> sourceList = new ArrayList<>();
-
-        sourceList.add(3);
-        sourceList.add(1);
-        sourceList.add(6);
-        sourceList.add(9);
-        sourceList.add(2);
-        sourceList.add(4);
-        sourceList.add(8);
-        quickSorted(sourceList);
-        System.out.println(sourceList);
-
-
+        int[] nums = new int[]{3,3,3,3,3,3,3,3,3};
+        findKthLargest(nums, 1);
     }
 
     int[] tmp;
@@ -104,6 +93,57 @@ public class SortTest {
         int temp = list.get(a);
         list.set(a, list.get(b));
         list.set(b, temp);
+    }
+
+
+
+    static int result = 0;
+
+    /**
+     * 寻找第k大的元素
+     * @param nums
+     * @param k
+     * @return
+     */
+    public static int findKthLargest(int[] nums, int k) {
+        quickSelect(nums, 0, nums.length - 1, k);
+        return result;
+    }
+
+    private static void quickSelect(int[] nums, int l, int r, int k) {
+        if (l == r) {
+            result = nums[k - 1];
+            return;
+        }
+        int left = l;
+        int right = r - 1;
+        int base = nums[r];
+        while(left < right) {
+            while (nums[left] >= base && left < right) {
+                left++;
+            }
+            while (nums[right] < base && left < right) {
+                right--;
+            }
+            if (left < right) {
+                swap(nums, left, right);
+            }
+        }
+        if (nums[left] < nums[r]) {
+            swap(nums, left, r);
+        }
+        //在这个时候计算出来了中间索引的位置
+        if (k > left) {
+            quickSelect(nums, left + 1, r, k);
+        } else {
+            quickSelect(nums, l, left, k);
+        }
+    }
+
+    private static void swap(int[] nums, int i, int j) {
+        int temp = nums[i];
+        nums[i] = nums[j];
+        nums[j] = temp;
     }
 
 }
