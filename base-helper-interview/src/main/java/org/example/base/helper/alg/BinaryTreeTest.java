@@ -3,10 +3,7 @@ package org.example.base.helper.alg;
 import lombok.Getter;
 import lombok.Setter;
 
-import java.util.ArrayDeque;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Queue;
+import java.util.*;
 
 /**
  * @author panfudong
@@ -15,6 +12,26 @@ import java.util.Queue;
 public class BinaryTreeTest {
 
     public static void main(String[] args) {
+
+        BinaryTree root = new BinaryTree();
+        root.value = 3;
+        BinaryTree a = new BinaryTree();
+        a.value = 9;
+        BinaryTree b = new BinaryTree();
+        b.value = 20;
+        BinaryTree c = new BinaryTree();
+        c.value = 15;
+        BinaryTree d = new BinaryTree();
+        d.value = 7;
+
+        root.left = a;
+        root.right = b;
+        root.right.left = c;
+        root.right.right = d;
+
+
+
+        zigzagLevelOrder(root);
     }
 
     /**
@@ -124,6 +141,45 @@ public class BinaryTreeTest {
                     queue.add(poll.right);
                 }
             }
+        }
+        return result;
+    }
+
+    /**
+     * 这里的关键问题 在于取的顺序和放的顺序不能变化，而是存值的时候，顺序变化，要不然二叉树将不会按照层取数
+     * https://leetcode.cn/problems/binary-tree-zigzag-level-order-traversal/description/
+     * 二叉树锯齿层序打印
+     * @param root
+     * @return
+     */
+    public static List<List<Integer>> zigzagLevelOrder(BinaryTree root) {
+        if (root == null) {
+            return new ArrayList<>();
+        }
+        List<List<Integer>> result = new ArrayList<>();
+        int shunxu = 0;
+        LinkedList<BinaryTree> queue = new LinkedList<>();
+        queue.add(root);
+        while (!queue.isEmpty()) {
+            int currentLevelItemSize = queue.size();
+            Deque<Integer> resultItem = new ArrayDeque<>();
+            for (int i = 0; i< currentLevelItemSize; i++) {
+                BinaryTree node;
+                node = queue.removeFirst();
+                if (shunxu % 2 == 1) {
+                    resultItem.addFirst(node.value);
+                } else {
+                    resultItem.addLast(node.value);
+                }
+                if (node.left != null) {
+                    queue.addLast(node.left);
+                }
+                if (node.right != null) {
+                    queue.addLast(node.right);
+                }
+            }
+            result.add(new ArrayList<>(resultItem));
+            shunxu++;
         }
         return result;
     }
