@@ -65,4 +65,47 @@ public class PathSumTest {
             resultItem.remove(resultItem.size() - 1);
         }
     }
+
+
+    public List<String> restoreIpAddresses(String s) {
+        List<String> result = new ArrayList<>();
+        bt(s, 0, new ArrayList<>(), result);
+        return result;
+    }
+
+    private void bt(String s, int start, List<String> resultItem, List<String> result) {
+        if (resultItem.size() == 4 && ipLength(resultItem) == s.length()) {
+            result.add(String.join(".", resultItem));
+            return;
+        }
+        if (resultItem.size() > 4) {
+            return;
+        }
+        for (int i = start + 1; i <= Math.min(s.length(), start + 3); i++) {
+            String ipStr = s.substring(start, i);
+            if (ipStr.length() > 1 && ipStr.startsWith("0")) {
+                continue;
+            }
+            int ipSegment;
+            try {
+                ipSegment = Integer.parseInt(ipStr);
+            } catch (Exception e) {
+                continue;
+            }
+            if (ipSegment > 255) {
+                continue;
+            }
+            resultItem.add(s.substring(start, i));
+            bt(s, i, resultItem, result);
+            resultItem.remove(resultItem.size() - 1);
+        }
+    }
+
+    private int ipLength(List<String> resultItem) {
+        int result = 0;
+        for (String s : resultItem) {
+            result += s.length();
+        }
+        return result;
+    }
 }
