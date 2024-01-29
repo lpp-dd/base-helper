@@ -30,8 +30,9 @@ public class BinaryTreeTest {
         root.right.right = d;
 
 
-
-        zigzagLevelOrder(root);
+        TreeNode node = new TreeNode(0);
+        maxPathSum(node);
+        System.out.println(node);
     }
 
     /**
@@ -182,6 +183,43 @@ public class BinaryTreeTest {
             shunxu++;
         }
         return result;
+    }
+
+    public static class TreeNode {
+        int val;
+        TreeNode left;
+        TreeNode right;
+        TreeNode() {}
+        TreeNode(int val) { this.val = val; }
+        TreeNode(int val, TreeNode left, TreeNode right) {
+            this.val = val;
+            this.left = left;
+            this.right = right;
+        }
+    }
+
+    /**
+     * https://leetcode.cn/problems/binary-tree-maximum-path-sum/description/
+     * 二叉树最大路径和
+     */
+    static int maxPathValue = Integer.MIN_VALUE;
+    public static int maxPathSum(TreeNode root) {
+        maxPathSum2(root);
+        return maxPathValue;
+    }
+
+    private static int maxPathSum2(TreeNode node) {
+        if (node == null) {
+            return 0;
+        }
+        //这里用max和0比较，其实用0在模拟 不用这个路径的情况 所以我下面的方法才能够使用 node.value + leftValue + rightValue
+        int leftValue = Math.max(0, maxPathSum2(node.left));
+        int rightValue = Math.max(0, maxPathSum2(node.right));
+        //当他作为一个全路径节点时，他的全路径值 = 节点值 + 左子树路径值 + 右子树路径值
+        int curValue = node.val + leftValue + rightValue;
+        maxPathValue = Math.max(curValue, maxPathValue);
+        //当他作为一个子节点的时候，只能输出左路径或者右路径
+        return node.val + Math.max(leftValue, rightValue);
     }
 
 }
