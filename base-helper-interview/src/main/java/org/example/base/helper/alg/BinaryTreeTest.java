@@ -148,7 +148,7 @@ public class BinaryTreeTest {
 
     /**
      * 这里的关键问题 在于取的顺序和放的顺序不能变化，而是存值的时候，顺序变化，要不然二叉树将不会按照层取数
-     * https://leetcode.cn/problems/binary-tree-zigzag-level-order-traversal/description/
+     * https://leetcode.cn/problems/binary-tree-zigzag-level-order-traversal/description/r
      * 二叉树锯齿层序打印
      * @param root
      * @return
